@@ -915,12 +915,9 @@ class __TabState extends State<_Tab>
                     end: 4,
                     bottom: 3,
                   ),
-            decoration: BoxDecoration(
-              borderRadius: borderRadius,
 
-              // if selected, the background is painted by _TabPainter
-              color: widget.selected ? null : backgroundColor,
-            ),
+            // if selected, the background is painted by _TabPainter
+            color: widget.selected ? null : backgroundColor,
             child: () {
               final result = ClipRect(
                 child: DefaultTextStyle.merge(
@@ -934,59 +931,67 @@ class __TabState extends State<_Tab>
                       color: foregroundColor,
                       size: 16.0,
                     ),
-                    child: Row(mainAxisSize: MainAxisSize.min, children: [
-                      if (widget.tab.icon != null)
-                        Padding(
-                          padding: const EdgeInsetsDirectional.only(end: 10.0),
-                          child: widget.tab.icon!,
-                        ),
-                      if (widget.tabWidthBehavior != TabWidthBehavior.compact ||
-                          (widget.tabWidthBehavior ==
-                                  TabWidthBehavior.compact &&
-                              widget.selected))
-                        Flexible(
-                          fit: widget.tabWidthBehavior == TabWidthBehavior.equal
-                              ? FlexFit.tight
-                              : FlexFit.loose,
-                          child: Padding(
-                            padding: const EdgeInsetsDirectional.only(end: 4.0),
-                            child: DefaultTextStyle.merge(
-                              softWrap: false,
-                              maxLines: 1,
-                              overflow: TextOverflow.clip,
-                              style: const TextStyle(fontSize: 12.0),
-                              child: widget.tab.text,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (widget.tab.icon != null)
+                          Padding(
+                            padding:
+                                const EdgeInsetsDirectional.only(end: 10.0),
+                            child: widget.tab.icon!,
+                          ),
+                        if (widget.tabWidthBehavior !=
+                                TabWidthBehavior.compact ||
+                            (widget.tabWidthBehavior ==
+                                    TabWidthBehavior.compact &&
+                                widget.selected))
+                          Flexible(
+                            fit: widget.tabWidthBehavior ==
+                                    TabWidthBehavior.equal
+                                ? FlexFit.tight
+                                : FlexFit.loose,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsetsDirectional.only(end: 4.0),
+                              child: DefaultTextStyle.merge(
+                                softWrap: false,
+                                maxLines: 1,
+                                overflow: TextOverflow.clip,
+                                style: const TextStyle(fontSize: 12.0),
+                                child: widget.tab.text,
+                              ),
                             ),
                           ),
-                        ),
-                      if (widget.tab.closeIcon != null &&
-                          (widget.visibilityMode ==
-                                  CloseButtonVisibilityMode.always ||
-                              (widget.visibilityMode ==
-                                      CloseButtonVisibilityMode.onHover &&
-                                  states.isHovering)))
-                        Padding(
-                          padding: const EdgeInsetsDirectional.only(start: 4.0),
-                          child: FocusTheme(
-                            data: const FocusThemeData(
-                              primaryBorder: BorderSide.none,
-                              secondaryBorder: BorderSide.none,
-                            ),
-                            child: Tooltip(
-                              message: localizations.closeTabLabel,
-                              child: SizedBox(
-                                height: 24.0,
-                                width: 32.0,
-                                child: IconButton(
-                                  icon: Icon(widget.tab.closeIcon),
-                                  onPressed: widget.onClose,
-                                  focusable: false,
+                        if (widget.tab.closeIcon != null &&
+                            (widget.visibilityMode ==
+                                    CloseButtonVisibilityMode.always ||
+                                (widget.visibilityMode ==
+                                        CloseButtonVisibilityMode.onHover &&
+                                    states.isHovering)))
+                          Padding(
+                            padding:
+                                const EdgeInsetsDirectional.only(start: 4.0),
+                            child: FocusTheme(
+                              data: const FocusThemeData(
+                                primaryBorder: BorderSide.none,
+                                secondaryBorder: BorderSide.none,
+                              ),
+                              child: Tooltip(
+                                message: localizations.closeTabLabel,
+                                child: SizedBox(
+                                  height: 24.0,
+                                  width: 32.0,
+                                  child: IconButton(
+                                    icon: Icon(widget.tab.closeIcon),
+                                    onPressed: widget.onClose,
+                                    focusable: false,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                    ]),
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -1008,12 +1013,16 @@ class __TabState extends State<_Tab>
             child: child,
           );
         }
-        if (widget.selected) {
-          child = CustomPaint(
-            painter: _TabPainter(backgroundColor),
+
+        child = Padding(
+          padding: const EdgeInsets.only(right: 4, bottom: 4),
+          child: Mica(
+            elevation: 2,
+            borderRadius: const BorderRadius.all(Radius.circular(4)),
+            backgroundColor: widget.selected ? backgroundColor : null,
             child: child,
-          );
-        }
+          ),
+        );
         return Semantics(
           selected: widget.selected,
           focusable: true,
@@ -1026,39 +1035,6 @@ class __TabState extends State<_Tab>
 
   @override
   bool get wantKeepAlive => true;
-}
-
-class _TabPainter extends CustomPainter {
-  final Color color;
-
-  const _TabPainter(this.color);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final path = Path();
-    const radius = 6.0;
-    path
-      ..moveTo(-radius, size.height)
-      ..quadraticBezierTo(0, size.height, 0, size.height - radius)
-      ..lineTo(0, radius)
-      ..quadraticBezierTo(0, 0, radius, 0)
-      ..lineTo(size.width - radius, 0)
-      ..quadraticBezierTo(size.width, 0, size.width, radius)
-      ..lineTo(size.width, size.height - radius)
-      ..quadraticBezierTo(
-        size.width,
-        size.height,
-        size.width + radius,
-        size.height,
-      );
-    canvas.drawPath(path, Paint()..color = color);
-  }
-
-  @override
-  bool shouldRepaint(_TabPainter oldDelegate) => color != oldDelegate.color;
-
-  @override
-  bool shouldRebuildSemantics(_TabPainter oldDelegate) => false;
 }
 
 class _TabViewScrollBehavior extends ScrollBehavior {

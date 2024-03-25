@@ -33,9 +33,9 @@ class _TabViewPageState extends State<TabViewPage> with PageMixin {
             Colors.accentColors[Random().nextInt(Colors.accentColors.length)],
       ),
       onClosed: () {
-        setState(() {
-          tabs!.remove(tab);
+        tabs!.remove(tab);
 
+        setState(() {
           if (currentIndex > 0) currentIndex--;
         });
       },
