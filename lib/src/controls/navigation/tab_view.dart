@@ -9,7 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 const double _kMinTileWidth = 80.0;
 const double _kMaxTileWidth = 240.0;
-const double _kTileHeight = 34.0;
+const double _kTileHeight = 36.0;
 const double _kButtonWidth = 32.0;
 
 enum CloseButtonVisibilityMode {
@@ -416,7 +416,7 @@ class _TabViewState extends State<TabView> {
         behavior: const _TabViewScrollBehavior(),
         child: Container(
           margin: const EdgeInsetsDirectional.only(top: 4.5),
-          padding: const EdgeInsetsDirectional.only(start: 8),
+          padding: const EdgeInsetsDirectional.only(start: 6),
           height: _kTileHeight,
           width: double.infinity,
           child: Row(children: [
@@ -727,10 +727,10 @@ class Tab with Diagnosticable {
   /// Creates a tab.
   Tab({
     this.key,
-    this.icon = const SizedBox.shrink(),
+    this.icon,
     required this.text,
     required this.body,
-    this.closeIcon = FluentIcons.chrome_close,
+    this.closeIcon,
     this.onClosed,
     this.semanticLabel,
     this.disabled = false,
@@ -749,7 +749,7 @@ class Tab with Diagnosticable {
   final Widget text;
 
   /// The close icon of the tab. Usually an [IconButton] widget
-  final IconData? closeIcon;
+  final Widget? closeIcon;
 
   /// Called when clicking x-to-close button or when thec`Ctrl + T` or
   /// `Ctrl + F4` is executed
@@ -769,14 +769,12 @@ class Tab with Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties
-      ..add(FlagProperty(
-        'disabled',
-        value: disabled,
-        defaultValue: false,
-        ifFalse: 'enabled',
-      ))
-      ..add(IconDataProperty('closeIcon', closeIcon));
+    properties.add(FlagProperty(
+      'disabled',
+      value: disabled,
+      defaultValue: false,
+      ifFalse: 'enabled',
+    ));
   }
 }
 
@@ -963,14 +961,13 @@ class __TabState extends State<_Tab>
                             ),
                           ),
                         if (widget.tab.closeIcon != null &&
-                            (widget.visibilityMode ==
+                                widget.visibilityMode ==
                                     CloseButtonVisibilityMode.always ||
-                                (widget.visibilityMode ==
-                                        CloseButtonVisibilityMode.onHover &&
-                                    states.isHovering)))
+                            (widget.visibilityMode ==
+                                    CloseButtonVisibilityMode.onHover &&
+                                states.isHovering))
                           Padding(
-                            padding:
-                                const EdgeInsetsDirectional.only(start: 4.0),
+                            padding: const EdgeInsetsDirectional.only(start: 4),
                             child: FocusTheme(
                               data: const FocusThemeData(
                                 primaryBorder: BorderSide.none,
@@ -978,15 +975,7 @@ class __TabState extends State<_Tab>
                               ),
                               child: Tooltip(
                                 message: localizations.closeTabLabel,
-                                child: SizedBox(
-                                  height: 24.0,
-                                  width: 32.0,
-                                  child: IconButton(
-                                    icon: Icon(widget.tab.closeIcon),
-                                    onPressed: widget.onClose,
-                                    focusable: false,
-                                  ),
-                                ),
+                                child: widget.tab.closeIcon,
                               ),
                             ),
                           ),
@@ -999,7 +988,10 @@ class __TabState extends State<_Tab>
                 return ReorderableDragStartListener(
                   index: widget.reorderIndex!,
                   enabled: !widget.tab.disabled,
-                  child: result,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    child: result,
+                  ),
                 );
               }
               return result;
@@ -1015,9 +1007,9 @@ class __TabState extends State<_Tab>
         }
 
         child = Padding(
-          padding: const EdgeInsets.only(right: 4, bottom: 4),
+          padding: const EdgeInsets.only(right: 6),
           child: Mica(
-            elevation: 2,
+            elevation: 1.6,
             borderRadius: const BorderRadius.all(Radius.circular(4)),
             backgroundColor: widget.selected ? backgroundColor : null,
             child: child,
