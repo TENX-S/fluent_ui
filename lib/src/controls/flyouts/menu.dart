@@ -229,6 +229,7 @@ class MenuFlyoutItem extends MenuFlyoutItemBase {
     required this.text,
     this.trailing,
     required this.onPressed,
+    this.enabled = true,
     this.selected = false,
   });
 
@@ -256,6 +257,9 @@ class MenuFlyoutItem extends MenuFlyoutItemBase {
   /// Called when the item is pressed.
   final VoidCallback? onPressed;
 
+  /// Whether this item is enabled or not.
+  final bool enabled;
+
   /// Whether this item is selected or not.
   final bool selected;
 
@@ -268,6 +272,7 @@ class MenuFlyoutItem extends MenuFlyoutItemBase {
       width: size.isEmpty ? null : size.width,
       padding: MenuFlyout.itemsPadding,
       child: FlyoutListTile(
+        enabled: enabled,
         selected: selected,
         showSelectedIndicator: false,
         icon: leading ??

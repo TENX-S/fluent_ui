@@ -8,9 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 const double _kMinTileWidth = 80.0;
-const double _kMaxTileWidth = 240.0;
-const double _kTileHeight = 36.0;
-const double _kButtonWidth = 32.0;
+const double _kMaxTileWidth = 160.0;
+const double _kTileHeight = 40.0;
+const double _kButtonWidth = 28.0;
 
 enum CloseButtonVisibilityMode {
   /// The close button will never be visible
@@ -60,7 +60,7 @@ class TabView extends StatefulWidget {
     this.onChanged,
     required this.tabs,
     this.onNewPressed,
-    this.addIconData = FluentIcons.add,
+    this.addIcon = const Icon(FluentIcons.add),
     this.shortcutsEnabled = true,
     this.onReorder,
     this.showScrollButtons = true,
@@ -90,7 +90,7 @@ class TabView extends StatefulWidget {
   final VoidCallback? onNewPressed;
 
   /// The icon of the new button
-  final IconData addIconData;
+  final Widget addIcon;
 
   /// Whether the following shortcuts are enabled:
   ///
@@ -166,7 +166,6 @@ class TabView extends StatefulWidget {
         value: showNewButton,
         ifFalse: 'no new button',
       ))
-      ..add(IconDataProperty('addIconData', addIconData))
       ..add(ObjectFlagProperty(
         'onChanged',
         onChanged,
@@ -311,15 +310,7 @@ class _TabViewState extends State<TabView> {
     );
     final Widget child = GestureDetector(
       onTertiaryTapUp: (_) => close(index),
-      child: Row(mainAxisSize: MainAxisSize.min, children: [
-        Flexible(
-          fit: widget.tabWidthBehavior == TabWidthBehavior.equal
-              ? FlexFit.tight
-              : FlexFit.loose,
-          child: tabWidget,
-        ),
-        divider(index),
-      ]),
+      child: tabWidget,
     );
     final minWidth = () {
       switch (widget.tabWidthBehavior) {
@@ -339,6 +330,7 @@ class _TabViewState extends State<TabView> {
     return AnimatedContainer(
       key: ValueKey<Tab>(tab),
       constraints: BoxConstraints(maxWidth: minWidth, minWidth: minWidth),
+      padding: const EdgeInsets.only(bottom: 4),
       duration: FluentTheme.of(context).fastAnimationDuration,
       curve: FluentTheme.of(context).animationCurve,
       child: child,
@@ -351,51 +343,38 @@ class _TabViewState extends State<TabView> {
     VoidCallback? onPressed,
     String tooltip,
   ) {
-    final item = SizedBox(
-      width: _kButtonWidth,
-      height: 24.0,
-      child: IconButton(
-        icon: Center(child: icon),
-        onPressed: onPressed,
-        style: ButtonStyle(
-          foregroundColor: ButtonState.resolveWith((states) {
-            if (states.isDisabled) {
-              return FluentTheme.of(context)
-                  .resources
-                  .accentTextFillColorDisabled;
-            } else {
-              return FluentTheme.of(context).inactiveColor;
-            }
-          }),
-          backgroundColor: ButtonState.resolveWith((states) {
-            if (states.isDisabled || states.isNone) return Colors.transparent;
-            return ButtonThemeData.uncheckedInputColor(
-              FluentTheme.of(context),
-              states,
-            );
-          }),
-          padding: ButtonState.all(EdgeInsets.zero),
+    final item = Padding(
+      padding: const EdgeInsets.only(left: 2, right: 6),
+      child: SizedBox(
+        width: _kButtonWidth,
+        height: 28.0,
+        child: IconButton(
+          icon: Center(child: icon),
+          onPressed: onPressed,
+          style: ButtonStyle(
+            foregroundColor: ButtonState.resolveWith((states) {
+              if (states.isDisabled) {
+                return FluentTheme.of(context)
+                    .resources
+                    .accentTextFillColorDisabled;
+              } else {
+                return FluentTheme.of(context).inactiveColor;
+              }
+            }),
+            backgroundColor: ButtonState.resolveWith((states) {
+              if (states.isDisabled || states.isNone) return Colors.transparent;
+              return ButtonThemeData.uncheckedInputColor(
+                FluentTheme.of(context),
+                states,
+              );
+            }),
+            padding: ButtonState.all(EdgeInsets.zero),
+          ),
         ),
       ),
     );
     if (onPressed == null) return item;
     return Tooltip(message: tooltip, child: item);
-  }
-
-  Widget divider(int index) {
-    return SizedBox(
-      height: _kTileHeight,
-      child: Divider(
-        direction: Axis.vertical,
-        style: DividerThemeData(
-          verticalMargin: const EdgeInsets.symmetric(vertical: 8),
-          decoration:
-              ![widget.currentIndex - 1, widget.currentIndex].contains(index)
-                  ? null
-                  : const BoxDecoration(color: Colors.transparent),
-        ),
-      ),
-    );
   }
 
   @override
@@ -562,7 +541,7 @@ class _TabViewState extends State<TabView> {
                       ),
                       child: _buttonTabBuilder(
                         context,
-                        Icon(widget.addIconData, size: 12.0),
+                        widget.addIcon,
                         widget.onNewPressed!,
                         localizations.newTabLabel,
                       ),

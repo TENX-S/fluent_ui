@@ -112,6 +112,7 @@ class FlyoutListTile extends StatelessWidget {
     this.autofocus = false,
     this.semanticLabel,
     this.margin = const EdgeInsetsDirectional.only(bottom: 5.0),
+    this.enabled = true,
     this.selected = false,
     this.showSelectedIndicator = true,
   });
@@ -145,6 +146,8 @@ class FlyoutListTile extends StatelessWidget {
 
   final EdgeInsetsGeometry margin;
 
+  final bool enabled;
+
   final bool selected;
 
   final bool showSelectedIndicator;
@@ -156,7 +159,7 @@ class FlyoutListTile extends StatelessWidget {
 
     return HoverButton(
       key: key,
-      onPressed: onPressed,
+      onPressed: enabled ? onPressed : null,
       focusNode: focusNode,
       autofocus: autofocus,
       semanticLabel: semanticLabel,
@@ -164,8 +167,12 @@ class FlyoutListTile extends StatelessWidget {
         final theme = FluentTheme.of(context);
         final radius = BorderRadius.circular(4.0);
 
-        if (selected) {
-          states = {ButtonStates.hovering};
+        if (enabled) {
+          if (selected) {
+            states = {ButtonStates.hovering};
+          }
+        } else {
+          states = {ButtonStates.disabled};
         }
 
         Widget content = Stack(children: [
@@ -203,7 +210,7 @@ class FlyoutListTile extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 14.0,
                       letterSpacing: -0.15,
-                      color: theme.inactiveColor,
+                      color: enabled ? theme.inactiveColor : Colors.grey[100],
                     ),
                     child: text,
                   ),
