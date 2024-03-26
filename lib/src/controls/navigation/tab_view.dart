@@ -977,6 +977,30 @@ class __TabState extends State<_Tab>
             }(),
           ),
         );
+
+        if (widget.selected) {
+          child = Stack(
+            children: [
+              child,
+              Positioned(
+                bottom: 0.2,
+                left: 0.6,
+                right: 0.6,
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 1.8,
+                  decoration: BoxDecoration(
+                    color: theme.accentColor.dark,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(6),
+                      bottomRight: Radius.circular(6),
+                    ),
+                  ),
+                ),
+              )
+            ],
+          );
+        }
         if (text != null) {
           child = Tooltip(
             message: text,
@@ -994,6 +1018,7 @@ class __TabState extends State<_Tab>
             child: child,
           ),
         );
+
         return Semantics(
           selected: widget.selected,
           focusable: true,
